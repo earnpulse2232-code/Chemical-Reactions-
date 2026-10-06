@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#f8fafc">
+    <title>Speed Building Test — Chemical Reactions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --bg-main: #f1f5f9;
+            --bg-card: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --green: #10b981;
+            --green-light: #ecfdf5;
+            --red: #ef4444;
+            --red-light: #fef2f2;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08);
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-dark);
+            min-height: 100dvh;
+            font-size: 15px;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: inherit;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            vertical-align: middle;
+        }
+        .hidden { display: none !important; }
+
+        /* MODE SELECTION SCREEN */
+        .start-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-main);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .start-card {
+            width: 100%;
+            max-width: 440px;
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 36px 28px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        .brand-logo-img {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            margin: 0 auto 16px;
+            display: block;
+            border-radius: 16px;
+        }
+        .start-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+        .start-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+        .mode-btn {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
+            padding: 16px;
+            background: #fff;
+            border: 1.5px solid var(--border-color);
+            border-radius: 16px;
+            text-align: left;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+        .mode-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        .mode-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .mode-icon.quiz { background: #dbeafe; color: #2563eb; }
+        .mode-icon.test { background: #d1fae5; color: #059669; }
+        .mode-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+        .mode-info-txt {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .mode-arrow {
+            margin-left: auto;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* MAIN APP */
+        .quiz-app {
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .quiz-header {
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 18px;
+        }
+        .quiz-header-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .hdr-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .hdr-logo-img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .hdr-brand-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text-dark);
+        }
+        .hdr-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            transition: all 0.15s;
+        }
+        .hdr-btn:hover { background: var(--bg-main); }
+        .hdr-timer {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-family: monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* QUESTIONS CONTAINER */
+        .quiz-main {
+            flex: 1;
+            overflow-y: auto;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+        .q-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+        .q-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .q-num-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .lang-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .q-text {
+            font-size: 16px;
+            line-height: 1.6;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 22px;
+            white-space: pre-line;
+        }
+        .opts {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+        .opt {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            background: #fff;
+            border: 1.5px solid var(--border-color);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .opt:hover:not(.locked) {
+            border-color: var(--primary);
+            background: #f8fafc;
+        }
+        .opt.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        .opt.correct {
+            border-color: var(--green);
+            background: var(--green-light);
+        }
+        .opt.wrong {
+            border-color: var(--red);
+            background: var(--red-light);
+        }
+        .opt.locked { cursor: default; }
+        .opt-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #fff;
+            border: 1.5px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+        .opt.selected .opt-letter {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+        .opt.correct .opt-letter {
+            background: var(--green);
+            border-color: var(--green);
+            color: #fff;
+        }
+        .opt.wrong .opt-letter {
+            background: var(--red);
+            border-color: var(--red);
+            color: #fff;
+        }
+        .opt-text {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .opt-tag {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+        .opt.correct .opt-tag { background: var(--green); color: #fff; }
+        .opt.wrong .opt-tag { background: var(--red); color: #fff; }
+
+        .sol-box {
+            margin-top: 20px;
+            padding: 16px;
+            background: #f8fafc;
+            border-left: 4px solid var(--primary);
+            border-radius: 12px;
+        }
+        .sol-head {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .sol-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        /* BOTTOM NAV */
+        .quiz-nav {
+            flex-shrink: 0;
+            background: #ffffff;
+            border-top: 1px solid var(--border-color);
+            padding: 12px 18px;
+        }
+        .quiz-nav-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.15s ease;
+        }
+        .nav-btn.prev {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            color: var(--text-dark);
+        }
+        .nav-btn.prev:disabled { opacity: 0.4; cursor: not-allowed; }
+        .nav-btn.submit {
+            background: var(--green-light);
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        .nav-btn.next {
+            background: var(--primary);
+            color: #ffffff;
+        }
+        .nav-btn.next:hover { background: var(--primary-hover); }
+
+        /* PALETTE MODAL */
+        .palette-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 150;
+            display: none;
+        }
+        .palette-overlay.open { display: block; }
+        .palette-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: min(340px, 85vw);
+            background: #ffffff;
+            z-index: 160;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(-100%);
+            transition: transform 0.25s ease;
+            box-shadow: var(--shadow-lg);
+        }
+        .palette-drawer.open { transform: translateX(0); }
+        .pal-head {
+            padding: 18px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 17px;
+        }
+        .pal-grid {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            align-content: start;
+        }
+        .pal-btn {
+            aspect-ratio: 1;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: #f8fafc;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s;
+        }
+        .pal-btn:hover { transform: scale(1.05); }
+        .pal-btn.answered { background: var(--green); color: #fff; border-color: var(--green); }
+        .pal-btn.current { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+        /* SUBMIT MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 170;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            width: 100%;
+            max-width: 420px;
+            background: #fff;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+        .modal-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+        .modal-stat {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+        }
+        .modal-stat-num { font-size: 24px; font-weight: 800; color: var(--text-dark); }
+        .modal-stat-label { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-top: 4px; }
+        .modal-actions { display: flex; flex-direction: column; gap: 10px; }
+        .modal-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .modal-btn.confirm { background: var(--primary); color: #fff; }
+        .modal-btn.cancel { background: #f1f5f9; color: var(--text-dark); }
+
+        /* RESULTS SCREEN */
+        .results-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-main);
+            z-index: 180;
+            display: none;
+            overflow-y: auto;
+            padding: 30px 16px 60px;
+        }
+        .results-screen.open { display: block; }
+        .results-box {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .res-hero { text-align: center; margin-bottom: 24px; }
+        .res-hero h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+        .res-score-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: #fff;
+            border-radius: 20px;
+            padding: 28px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-md);
+        }
+        .res-score-val { font-size: 54px; font-weight: 800; line-height: 1; margin-bottom: 6px; }
+        .res-score-val span { font-size: 22px; opacity: 0.6; }
+        .res-score-lbl { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.8; }
+        .res-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .res-item {
+            background: #fff;
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        .res-item-val { font-size: 22px; font-weight: 700; }
+        .res-item-lbl { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-top: 4px; }
+        .res-actions { display: flex; flex-direction: column; gap: 10px; }
+        .res-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .res-btn.primary { background: var(--primary); color: #fff; }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-80px);
+            background: #0f172a;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 300;
+            opacity: 0;
+            transition: all 0.25s ease;
+            box-shadow: var(--shadow-lg);
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- START / MODE SELECT -->
+    <div class="start-screen" id="startScreen">
+        <div class="start-card">
+            <img src="logo.png" alt="Quiz Logo" class="brand-logo-img" onerror="this.style.display='none'">
+            <h1 class="start-title">Chemical Reactions &amp; Equations</h1>
+            <p class="start-desc">Speed Building Test — Choose your mode to begin.</p>
+            
+            <button class="mode-btn" onclick="startApp('quiz')">
+                <div class="mode-icon quiz"><i class="fas fa-bolt"></i></div>
+                <div>
+                    <div class="mode-name">Practice Mode</div>
+                    <div class="mode-info-txt">Instant answer &amp; solution key after each question.</div>
+                </div>
+                <i class="fas fa-arrow-right mode-arrow"></i>
+            </button>
+
+            <button class="mode-btn" onclick="startApp('test')">
+                <div class="mode-icon test"><i class="fas fa-clock"></i></div>
+                <div>
+                    <div class="mode-name">Exam Mode</div>
+                    <div class="mode-info-txt">Real exam simulation. Detailed score at the end.</div>
+                </div>
+                <i class="fas fa-arrow-right mode-arrow"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN APP SCREEN -->
+    <div class="quiz-app hidden" id="quizApp">
+        <header class="quiz-header">
+            <div class="quiz-header-inner">
+                <button class="hdr-btn" onclick="openPalette()"><i class="fas fa-th-large"></i></button>
+                <div class="hdr-brand">
+                    <img src="logo.png" alt="Logo" class="hdr-logo-img" onerror="this.style.display='none'">
+                    <span class="hdr-brand-title">Science Quiz</span>
+                </div>
+                <div class="hdr-timer">
+                    <i class="fas fa-stopwatch"></i>
+                    <span id="timerText">00:00</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="quiz-main" id="quizMain"></main>
+
+        <nav class="quiz-nav" id="quizNav">
+            <div class="quiz-nav-inner">
+                <button class="nav-btn prev" id="prevBtn" onclick="prevQuestion()">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="nav-btn submit" onclick="openSubmitModal()">
+                    <i class="fas fa-paper-plane"></i> Submit
+                </button>
+                <button class="nav-btn next" id="nextBtn" onclick="nextQuestion()">
+                    <span id="nextLabel">Next</span> <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- QUESTION PALETTE -->
+    <div class="palette-overlay" id="paletteOverlay" onclick="closePalette()"></div>
+    <aside class="palette-drawer" id="paletteDrawer">
+        <div class="pal-head">
+            <span>Questions</span>
+            <button onclick="closePalette()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="pal-grid" id="paletteGrid"></div>
+    </aside>
+
+    <!-- SUBMIT CONFIRMATION MODAL -->
+    <div class="modal-overlay" id="submitModal">
+        <div class="modal-box">
+            <h3 class="modal-title">Submit Test?</h3>
+            <div class="modal-stats-grid">
+                <div class="modal-stat">
+                    <div class="modal-stat-num" id="modalAttempted" style="color:var(--green)">0</div>
+                    <div class="modal-stat-label">Attempted</div>
+                </div>
+                <div class="modal-stat">
+                    <div class="modal-stat-num" id="modalUnattempted" style="color:var(--text-muted)">0</div>
+                    <div class="modal-stat-label">Unattempted</div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn confirm" onclick="confirmSubmit()">Yes, Finish Test</button>
+                <button class="modal-btn cancel" onclick="closeSubmitModal()">Resume Test</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FINAL RESULTS SCREEN -->
+    <div class="results-screen" id="resultsScreen">
+        <div class="results-box" id="resultsInner"></div>
+    </div>
+
+    <div class="toast" id="toast"><i class="fas fa-check"></i><span id="toastText"></span></div>
+
+    <script>
+        const QUESTIONS = [
+            {"en": "A chemist keeps calcium carbonate, silver chloride, and lead nitrate exposed to sunlight. Which compound/s show/s a visible change?", "hi": "एक रसायनज्ञ कैल्शियम कार्बोनेट, सिल्वर क्लोराइड और लेड नाइट्रेट को सूर्य के प्रकाश के संपर्क में रखता है। कौन-से यौगिक, दृश्यमान परिवर्तन दर्शाएंगे?", "opts": ["Only lead nitrate / केवल लेड नाइट्रेट", "Only silver chloride / केवल सिल्वर क्लोराइड", "All three compounds / तीनों यौगिक", "Only calcium carbonate / केवल कैल्शियम कार्बोनेट"], "ans": 1},
+            {"en": "Which equation correctly represents a displacement reaction involving metals and their salt solutions?", "hi": "कौन-सा समीकरण, धातुओं और उनके लवण विलयनों से शामिल विस्थापन अभिक्रिया को सर्वोत्तम रूप से दर्शाता है?", "opts": ["Cu + ZnSO₄ → CuSO₄ + Zn", "Au + FeSO₄ → AuSO₄ + Fe", "Ag + MgSO₄ → AgSO₄ + Mg", "Zn + CuSO₄ → ZnSO₄ + Cu"], "ans": 3},
+            {"en": "When zinc reacts with dilute HCl, the reaction can be classified as:", "hi": "जब जस्ता, तनु HCl के साथ अभिक्रिया करता है, तो इस अभिक्रिया को _______ रूप में वर्गीकृत किया जा सकता है।", "opts": ["Displacement reaction / विस्थापन अभिक्रिया", "Double decomposition reaction / द्वि-अपघटन अभिक्रिया", "Combination reaction / संयोजन अभिक्रिया", "Neutralization reaction / उदासीनीकरण अभिक्रिया"], "ans": 0},
+            {"en": "Which condition will slow down rancidity in oily food items ?", "hi": "कौन-सी स्थिति तैलीय खाद्य पदार्थों में विकृतगंधिता को धीमा कर देगी?", "opts": ["Storage in airtight containers flushed with nitrogen / नाइट्रोजन से भरे हुए वायुरोधी पात्रों में भंडारण", "Exposure to sunlight / सूर्य के प्रकाश में रखना", "Presence of moisture / आद्रता की उपस्थिति", "Storage at high temperature / उच्च तापमान पर भंडारण"], "ans": 0},
+            {"en": "Consider the reaction: HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)\nThis reaction is best classified as which type of chemical reactions?", "hi": "निम्नलिखित अभिक्रिया पर विचार कीजिए: HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)\nउपरोक्त अभिक्रिया को किस प्रकार की रासायनिक अभिक्रिया के रूप में सर्वोत्तम तरीके से वर्गीकृत किया जाता है?", "opts": ["Neutralization reaction / उदासीनीकरण अभिक्रिया", "Decomposition reaction / अपघटन (वियोजन) अभिक्रिया", "Combination reaction / संयोजन अभिक्रिया", "Displacement reaction / विस्थापन अभिक्रिया"], "ans": 0},
+            {"en": "Calcium carbonate is heated to produce calcium oxide and carbon dioxide; this is a type of:", "hi": "कैल्शियम कार्बोनेट को तप्त करने पर कैल्शियम ऑक्साइड और कार्बन डाइऑक्साइड उत्पन्न होते हैं; यह एक प्रकार की __________ है।", "opts": ["substitution reaction / प्रतिस्थापन अभिक्रिया", "addition reaction / योगज अभिक्रिया", "decomposition reaction / अपघटन अभिक्रिया", "displacement reaction / विस्थापन अभिक्रिया"], "ans": 2},
+            {"en": "Consider the reaction:\nNa₂SO₄(aq) + BaCl₂(aq) → BaSO₄(s) + 2NaCl(aq)\nWhich feature of this reaction justifies classifying it specifically as a precipitation reaction?", "hi": "निम्नलिखित अभिक्रिया पर विचार कीजिए:\nNa₂SO₄(aq) + BaCl₂(aq) → BaSO₄(s) + 2NaCl(aq)\nउपरोक्त अभिक्रिया की कौन-सी विशेषता इसे विशेष रूप से अवक्षेपण अभिक्रिया के रूप में वर्गीकृत करने को उचित ठहराती है?", "opts": ["Reactants exist initially as aqueous solutions / अभिक्रियक (Reactants) प्रारंभ में जलीय विलयन के रूप में मौजूद होते हैं", "Insoluble barium sulphate forms in solution / विलयन में अघुलनशील बेरियम सल्फेट का निर्माण होता है", "Sodium chloride remains dissolved in water / सोडियम क्लोराइड, जल में विलीन बना रहता है", "Two ionic compounds exchange partners / दो आयनिक यौगिक भागीदारों (partners) का विनिमय करते हैं"], "ans": 1},
+            {"en": "Consider the following reactions:\n(I) Na₂SO₄(aq) + BaCl₂(aq) → BaSO₄(s) + 2NaCl(aq)\n(II) AgNO₃(aq) + NaCl(aq) → AgCl(s) + NaNO₃(aq)\n(III) CaCO₃(s) —Heat→ CaO(s) + CO₂(g)\n(IV) Fe(s) + CuSO₄(aq) → FeSO₄(aq) + Cu(s)\nWhich of the above reactions are precipitation reactions?", "hi": "निम्नलिखित अभिक्रियाओं पर विचार कीजिए:\n(I) Na₂SO₄(aq) + BaCl₂(aq) → BaSO₄(s) + 2NaCl(aq)\n(II) AgNO₃(aq) + NaCl(aq) → AgCl(s) + NaNO₃(aq)\n(III) CaCO₃(s) —Heat→ CaO(s) + CO₂(g)\n(IV) Fe(s) + CuSO₄(aq) → FeSO₄(aq) + Cu(s)\nउपरोक्त में से कौन-सी अभिक्रियाएं, अवक्षेपण अभिक्रियाएं हैं?", "opts": ["Only I and III / केवल I और III", "Only III and IV / केवल III और IV", "Only I and II / केवल I और II", "Only II and IV / केवल II और IV"], "ans": 2},
+            {"en": "Which observation best demonstrates that reduction has occurred in a chemical reaction?", "hi": "निम्नलिखित में से कौन-सा अवलोकन सर्वोत्तम तरीके से यह दर्शाता है कि रासायनिक अभिक्रिया में अपचयन हुआ है?", "opts": ["Oxygen is removed from a metal oxide during heating. / तापन के दौरान धात्विक ऑक्साइड से ऑक्सीजन निष्कासत हो जाती है", "Hydrogen gas is evolved after metal reacts with acid. / अम्ल के साथ धातु की अभिक्रिया के बाद हाइड्रोजन गैस उत्सर्जित होती है", "Oxygen combines with a metal to form its oxide layer. / ऑक्सीजन, धातु के साथ अभिक्रिया करके ऑक्साइड की परत बनाती है", "Carbon dioxide is released after heating a carbonate salt. / कार्बोनेट लवण को तप्त करने पर कार्बन डाइऑक्साइड विमुक्त होती है"], "ans": 0},
+            {"en": "In the reaction MnO₂ + 4HCl → MnCl₂ + 2H₂O + Cl₂, which substance is oxidized?", "hi": "अभिक्रिया MnO₂ + 4HCl → MnCl₂ + 2H₂O + Cl₂ में, कौन-सा पदार्थ ऑक्सीकृत होता है?", "opts": ["MnCl₂", "H₂O", "HCl", "MnO₂"], "ans": 2},
+            {"en": "Which observation would show a violation of the law of conservation of mass in a closed system?", "hi": "निम्नलिखित में से कौन-सा अवलोकन संवृत निकाय में द्रव्यमान संरक्षण के नियम के उल्लंघन को दर्शाता है?", "opts": ["The color of the solution changes after reaction / अभिक्रिया के बाद विलयन का रंग परिवर्तित हो जाता है", "A white precipitate forms after mixing solutions / विलयनों के मिश्रण के बाद एक श्वेत अवक्षेप बनता है", "The temperature of the system increases / निकाय के तापमान में वृद्धि होती है", "The mass of the products is less than the mass of the reactants / उत्पादों का द्रव्यमान, अभिकारकों के द्रव्यमान से कम होता है"], "ans": 3},
+            {"en": "When hydrochloric acid reacts with sodium hydroxide to form sodium chloride and water, which type of reaction is primarily demonstrated?", "hi": "जब हाइड्रोक्लोरिक अम्ल, सोडियम हाइड्रॉक्साइड के साथ अभिक्रिया करके सोडियम क्लोराइड और जल बनाता है, तो मुख्य रूप से किस प्रकार की अभिक्रिया प्रदर्शित होती है?", "opts": ["Displacement reaction / विस्थापन अभिक्रिया", "Combination reaction / संयोजन अभिक्रिया", "Double displacement reaction / द्वि-विस्थापन अभिक्रिया", "Redox reaction / रेडॉक्स अभिक्रिया"], "ans": 2},
+            {"en": "Which visible change confirms displacement reaction when iron reacts with copper sulphate solution?", "hi": "जब आयरन, कॉपर सल्फेट विलयन के साथ अभिक्रिया करता है, तो कौन-सा दृश्य परिवर्तन विस्थापन अभिक्रिया की पुष्टि करता है?", "opts": ["Solution temperature drops suddenly / विलयन का तापमान अचानक गिरता है", "Colourless gas evolves rapidly / रंगहीन गैस तेजी से विकसित होती है", "Reddish-brown copper deposits appear / लाल-भूरा कॉपर निक्षेप दिखाई देता है", "White precipitate forms instantly / तुरंत सफेद अवक्षेप बनता है"], "ans": 2},
+            {"en": "When carbon dioxide gas is passed through lime water (calcium hydroxide solution), it produces a white precipitate which is of:", "hi": "जब कार्बन डाइऑक्साइड गैस को चूने के पानी (कैल्शियम हाइड्रॉक्साइड विलयन) से गुजारा जाता है, तो यह _____________ का श्वेत अवक्षेप उत्‍‍पन्‍न करता है।", "opts": ["calcium carbonate / कैल्शियम कार्बोनेट", "calcium oxide / कैल्शियम ऑक्साइड", "calcium hydrogen carbonate / कैल्शियम हाइड्रोजन कार्बोनेट", "calcium sulphate / कैल्शियम सल्फेट"], "ans": 0},
+            {"en": "What primary factor determines whether one element can displace another from its compound?", "hi": "निम्नलिखित में से कौन-सा प्राथमिक कारक यह निर्धारित करता है कि एक तत्व दूसरे तत्व को उसके यौगिक से विस्थापित कर सकता है?", "opts": ["Difference in solution concentration / विलयन सांद्रता में अंतर", "Relative reactivity of the elements involved / संबंधित तत्वों की सापेक्षिक अभिक्रियाशीलता", "Difference in physical state / भौतिक अवस्था में अंतर", "Difference in atomic masses / परमाण्विक द्रव्यमानों में अंतर"], "ans": 1},
+            {"en": "What is the main characteristic of a double displacement reaction?", "hi": "द्वि-विस्थापन अभिक्रिया का मुख्य अभिलक्षण क्या है?", "opts": ["Gain of oxygen by a substance / किसी पदार्थ को ऑक्सीजन का लाभ", "Removal of hydrogen from acid / अम्ल से हाइड्रोजन का निष्कासन", "Combination of two elements / दो तत्वों का संयोजन", "Exchange of ions between reactants / अभिकारकों के बीच आयनों का विनिमय"], "ans": 3},
+            {"en": "Which change correctly represents oxidation in a chemical reaction?", "hi": "निम्नलिखित में से कौन-सा परिवर्तन, रासायनिक अभिक्रिया में ऑक्सीकरण को सही से निरूपित करता है?", "opts": ["Exchange of ions between compounds / यौगिकों के बीच आयनों का विनिमय", "Formation of salt and water / लवण और जल का निर्माण", "Addition of oxygen to a substance / किसी पदार्थ में ऑक्सीजन का योग", "Removal of oxygen from a compound / किसी यौगिक से ऑक्सीजन का निष्कासन"], "ans": 2},
+            {"en": "Why is the reaction flask corked during experiments verifying conservation of mass?", "hi": "द्रव्यमान संरक्षण को सत्यापित करने वाले प्रयोगों के दौरान अभिक्रिया फ्लास्क को कॉर्क क्यों किया जाता है?", "opts": ["To increase reaction speed / अभिक्रिया के वेग में वृद्धि करने के लिए", "To allow air circulation / वायु परिसंचरण को संभव करने के लिए", "To cool reaction mixture / अभिक्रिया मिश्रण को शीतल करने के लिए", "To prevent loss of matter / पदार्थ की हानि को रोकने के लिए"], "ans": 3},
+            {"en": "What chemical change best indicates oxidation of a substance during a chemical reaction?", "hi": "निम्नलिखित में से कौन-सा रासायनिक परिवर्तन, किसी रासायनिक अभिक्रिया के दौरान पदार्थ के ऑक्सीकरण को सर्वोत्तम रूप से इंगित करता है?", "opts": ["Gain of hydrogen only / केवल हाइड्रोजन का लाभ", "Loss of electrons only / केवल इलेक्ट्रॉनों की हानि", "Gain of oxygen or loss of hydrogen / ऑक्सीजन का लाभ या हाइड्रोजन की हानि", "Change in physical state / भौतिक अवस्था में परिवर्तन"], "ans": 2},
+            {"en": "Consider the reaction:\nZnO(s) + C(s) → Zn(s) + CO(g)\nWhich of the following correctly identifies the substance undergoing reduction in this reaction?", "hi": "निम्नलिखित अभिक्रिया पर विचार कीजिएः\nZnO(s) + C(s) → Zn(s) + CO(g)\nइस अभिक्रिया में उस पदार्थ की सही पहचान कीजिए जिसका अपचयन होता है?", "opts": ["ZnO loses oxygen forming Zn / ZnO, ऑक्सीजन का त्यागकर Zn बनाता है", "Carbon gains oxygen forming CO / कार्बन, ऑक्सीजन ग्रहण करके CO बनाता है", "CO produced during oxidation / ऑक्सीकरण के दौरान CO उत्पन्न होती है", "ZnO converted into zinc metal / ZnO, जिंक धातु में परिवर्तित होता है"], "ans": 0},
+            {"en": "What chemical process mainly causes unpleasant smell and taste in oily food items?", "hi": "कौन-सा रासायनिक प्रक्रम, मुख्यत: तैलीय खाद्य पदार्थों में अप्रिय गंध और स्वाद का कारण बनता है?", "opts": ["Evaporation of water / जल का वाष्पीकरण", "Oxidation of fats and oils / वसा और तेलों का ऑक्सीकरण", "Fermentation of sugars / शर्करा का किण्वन", "Action of enzymes / एंजाइमों की क्रिया"], "ans": 1},
+            {"en": "Which of the following statements correctly explains the relation between a combination reaction and energy?", "hi": "निम्नलिखित में से कौन-सा कथन संयोजन अभिक्रिया और ऊर्जा के बीच संबंध को सही ढंग से वर्णित करता है?", "opts": ["All combination reactions must absorb heat / सभी संयोजन अभिक्रियाओं को ऊष्मा अवशोषित करनी चाहिए।", "Many combination reactions are exothermic, though some can be endothermic / कई संयोजन अभिक्रियाएँ ऊष्माक्षेपी होती हैं, हालाँकि कुछ ऊष्माशोषी भी हो सकती हैं।", "All combination reactions release heat / सभी संयोजन अभिक्रियाएँ ऊष्मा निर्मुक्त करती हैं।", "Combination reactions neither release nor absorb energy / संयोजन अभिक्रियाएँ न तो ऊर्जा निर्मुक्त करती हैं और न ही अवशोषित करती हैं।"], "ans": 1},
+            {"en": "Refer to the two statements given below and choose the CORRECT option.\nStatement A: A decomposition reaction occurs when a single compound breaks down into two or more simpler substances.\nStatement B: Decomposition reactions always require the presence of oxygen.", "hi": "नीचे दिए गए दो कथनों को पढ़िए और सही विकल्प का चयन कीजिए।\nकथन A: वियोजन (अपघटन) अभिक्रिया तब होती है जब एक एकल यौगिक दो या दो से अधिक सरल पदार्थों में टूट जाता है।\nकथन B: वियोजन अभिक्रियाओं के लिए सदैव ऑक्सीजन की उपस्थिति अनिवार्य होती है।", "opts": ["Both statements A and B are incorrect. / कथन A और B दोनों गलत हैं।", "Both statements A and B are correct. / कथन A और B दोनों सही हैं।", "Statement A is incorrect but B is correct. / कथन A गलत है लेकिन कथन B सही है।", "Statement A is correct but B is incorrect. / कथन A सही है लेकिन कथन B गलत है।"], "ans": 3},
+            {"en": "If you mix aqueous solutions of sodium sulphate and barium chloride, what type of chemical reaction occurs and what is the evidence for it?", "hi": "यदि आप सोडियम सल्फेट और बेरियम क्लोराइड के जलीय विलयनों को मिलाते हैं, तो किस प्रकार की रासायनिक अभिक्रिया होती है और इसके प्रमाण क्या है?", "opts": ["Redox reaction; gas evolution occurs / रेडॉक्स अभिक्रिया; गैस का उत्सर्जन होता है", "Decomposition; heat release / अपघटन; ऊष्मा का मुक्त होना", "Single displacement; color of substance changes / एकल विस्थापन; पदार्थ का रंग बदलता है", "Double displacement; formation of a precipitate / दोहरा विस्थापन; अवक्षेप का निर्माण"], "ans": 3},
+            {"en": "What fundamental change distinguishes a decomposition reaction from other types of chemical reactions?", "hi": "निम्नलिखित में से कौन-सा मूलभूत परिवर्तन, अपघटन अभिक्रिया को अन्य प्रकार की रासायनिक अभिक्रियाओं से पृथक करता है?", "opts": ["One element replaces another element / एक तत्व द्वारा दूसरे तत्व का प्रतिस्थापन", "Ions exchange places in solution / विलयन में आयनों का विनिमय", "One compound breaks into simpler substances / एक यौगिक का सरल पदार्थों में टूटना", "Two substances combine to form one / दो पदार्थों के संयोजन से एक पदार्थ का निर्माण"], "ans": 2},
+            {"en": "A packet of potato chips is filled with nitrogen gas before sealing. What is the main reason for using nitrogen in the packet?", "hi": "एक आलू चिप्स के पैकेट को सील करने से पूर्व नाइट्रोजन गैस से भरा जाता है। पैकेट में नाइट्रोजन का उपयोग करने का मुख्य कारण क्या होता है?", "opts": ["Nitrogen reacts with oil to stabilize it / नाइट्रोजन, तेल के साथ अभिक्रिया करके उसका स्थिरीकरण करता है", "Nitrogen removes moisture from chips / नाइट्रोजन, चिप्स से नमी को हटा देता है", "Nitrogen increases the crispness of chips / नाइट्रोजन, चिप्स के कुरकुरेपन को बढ़ा देता है", "Nitrogen prevents oxidation of oils and fats / नाइट्रोजन, तेल और वसा के ऑक्सीकरण को रोकता है"], "ans": 3},
+            {"en": "A student dips an iron nail in a blue solution of copper sulphate. After 30 minutes, the blue colour fades and a reddish-brown deposit forms on the nail. The reddish-brown deposit is due to _______.", "hi": "एक विद्यार्थी कॉपर सल्फेट के नीले विलयन में एक लोहे की कील डुबोता है। 30 मिनट बाद, नीला रंग फीका पड़ जाता है और कील पर लाल-भूरे रंग का निक्षेप बन जाता है। यह लाल-भूरे रंग का निक्षेप किस कारण होता है?", "opts": ["copper sulphate converting to metallic copper / कॉपर सल्फेट के धात्विक कॉपर में परिवर्तित होना", "copper sulphate converting to iron oxide (rust) / कॉपर सल्फेट के आयरन ऑक्साइड (जंग) में परिवर्तित होना", "copper sulphate converting to Cu⁺ / कॉपर सल्फेट के Cu⁺ में परिवर्तित होना", "Fe converting to copper oxide / Fe के कॉपर ऑक्साइड में परिवर्तित होना"], "ans": 0},
+            {"en": "Consider the reaction:\nNa₂SO₄(aq) + BaCl₂(aq) → BaSO₄(s) + 2NaCl(aq)\nWhich statement best justifies classifying this reaction as a double displacement reaction?", "hi": "निम्नलिखित अभिक्रिया पर विचार कीजिए:\nNa₂SO₄(aq) + BaCl₂(aq) → BaSO₄(s) + 2NaCl(aq)\nकौन-सा कथन, उपरोक्त अभिक्रिया को द्वि विस्थापन अभिक्रिया के रूप में सर्वोत्तम तरीके से वर्गीकृत करता है?", "opts": ["Heat causes compound to break into products / ऊष्मा, यौगिक को उत्पादों में विभक्त करती है", "One metal displaces another from compound / एक धातु यौगिक से दूसरे को विस्थापित करती है", "Exchange of ions produces two new compounds / आयनों के विनिमय से दो नए यौगिक बनते हैं", "Reactants combine forming only one product / अभिक्रियक संयोजित होकर केवल एक उत्पाद बनाते हैं"], "ans": 2},
+            {"en": "Consider the reaction:\nMnO₂ + 4HCl → MnCl₂ + 2H₂O + Cl₂\nBased on the oxygen–hydrogen definition of redox reactions, which substance undergoes reduction in this reaction?", "hi": "निम्नलिखित अभिक्रिया पर विचार कीजिए:\nMnO₂ + 4HCl → MnCl₂ + 2H₂O + Cl₂\nरेडॉक्स अभिक्रियाओं की ऑक्सीजन–हाइड्रोजन परिभाषा के आधार पर, इस अभिक्रिया में किस पदार्थ का अपचयन होता है?", "opts": ["Manganese dioxide loses oxygen / मैंगनीज डाइऑक्साइड, ऑक्सीजन का त्याग करता है", "Chlorine gas forms by oxidation / ऑक्सीकरण से क्लोरीन गैस निर्मित होती है", "Water forms after oxygen gain / ऑक्सीजन लब्धि के बाद जल निर्मित होता है", "Hydrogen chloride loses hydrogen / हाइड्रोजन क्लोराइड, हाइड्रोजन का त्याग करता है"], "ans": 0},
+            {"en": "Consider the reaction: CuO(s) + H₂(g) → Cu(s) + H₂O(l)\nWhich option correctly identifies the oxidation–reduction changes occurring in this reaction?", "hi": "निम्नलिखित अभिक्रिया पर विचार कीजिएः CuO(s) + H₂(g) → Cu(s) + H₂O(l)\nकौन-सा विकल्प, इस अभिक्रिया में होने वाले ऑक्सीकरण–अपचयन में परिवर्तन की सही पहचान करता है?", "opts": ["Copper and hydrogen both oxidised / कॉपर और हाइड्रोजन दोनों ऑक्सीकृत होते हैं", "Hydrogen reduced while CuO oxidised / हाइड्रोजन अपचयित होता है जबकि CuO ऑक्सीकृत होता है", "Hydrogen oxidised while CuO reduced / हाइड्रोजन ऑक्सीकृत होता है जबकि CuO अपचयित होता है", "Copper oxidised while H₂ reduced / कॉपर ऑक्सीकृत होता है जबकि H₂ अपचयित होता है"], "ans": 2},
+            {"en": "A student observes the following reaction during heating of copper powder in air.\n2Cu + O₂ → 2CuO\nLater, hydrogen gas is passed over the black copper oxide and reddish-brown copper is obtained.\nCuO + H₂ → Cu + H₂O\nWhich substance is oxidized in first reaction and reduced in second reaction?", "hi": "एक विद्यार्थी, वायु में कॉपर पाउडर को गर्म करने पर निम्नलिखित अभिक्रिया देखता है:\n2Cu + O₂ → 2CuO\nबाद में, हाइड्रोजन गैस को काले कॉपर ऑक्साइड पर प्रवाहित किया जाता है और लाल-भूरा कॉपर प्राप्त होता है।\nCuO + H₂ → Cu + H₂O\nकौन-सा पदार्थ, पहली अभिक्रिया में ऑक्सीकृत होता है और दूसरी अभिक्रिया में अपचयित होता है?", "opts": ["Oxygen in first reaction and Copper oxide in second reaction / पहली अभिक्रिया में ऑक्सीजन और दूसरी अभिक्रिया में कॉपर ऑक्साइड", "Copper oxide in first reaction and Copper in second reaction / पहली अभिक्रिया में कॉपर ऑक्साइड और दूसरी अभिक्रिया में कॉपर", "Copper in first reaction and Copper oxide in second reaction / पहली अभिक्रिया में कॉपर और दूसरी अभिक्रिया में कॉपर ऑक्साइड", "Hydrogen in first reaction and Copper oxide in second reaction / पहली अभिक्रिया में हाइड्रोजन और दूसरी अभिक्रिया में कॉपर ऑक्साइड"], "ans": 2},
+            {"en": "Consider the following reactions:\n(I) CaCO₃(s) —Heat→ CaO(s) + CO₂(g)\n(II) 2AgCl(s) —Sunlight→ 2Ag(s) + Cl₂(g)\n(III) 2H₂O(l) —Electric current→ 2H₂(g) + O₂(g)\n(IV) Fe(s) + CuSO₄(aq) → FeSO₄(aq) + Cu(s)\nWhich of the above reactions correctly represent decomposition reactions?", "hi": "निम्नलिखित अभिक्रियाओं पर विचार कीजिए।\n(I) CaCO₃(s) —ताप → CaO(s) + CO₂(g)\n(II) 2AgCl(s) —सूर्य का प्रकाश→ 2Ag(s) + Cl₂(g)\n(III) 2H₂O(l) —विद्युत् धारा→ 2H₂(g) + O₂(g)\n(IV) Fe(s) + CuSO₄(aq) → FeSO₄(aq) + Cu(s)\nउपरोक्त अभिक्रियाओं में से कौन-सी अभिक्रियाएं सही ढंग से अपघटन अभिक्रियाओं को दर्शाती हैं?", "opts": ["Only I, II and III reactions / केवल अभिक्रियाएं I, II और III", "Only II and III reactions / केवल अभिक्रियाएं II और III", "Only I and II reactions / केवल अभिक्रियाएं I और II", "Only III and IV reactions / केवल अभिक्रियाएं III और IV"], "ans": 0},
+            {"en": "Phase change reaction in Daniell cell is an example of:", "hi": "डेनियल सेल में प्रावस्था परिवर्तन अभिक्रिया किसका उदाहरण है?", "opts": ["Isochoric process / समआयतनिक प्रक्रिया", "Cyclic process / चक्रीय प्रक्रिया", "Reversible process / उत्क्रमणीय प्रक्रिया", "Irreversible process / अनुत्क्रमणीय प्रक्रिया"], "ans": 2},
+            {"en": "According to Le Chatelier's Principle, what happens to a system at equilibrium when it is subjected to a change in concentration, pressure or temperature?", "hi": "ला-शातेलिए के सिद्धांत के अनुसार, जब किसी साम्यवस्था पर सांद्रता, दाब या तापमान में परिवर्तन किया जाता है, तो उस पर क्या प्रभाव पड़ता है?", "opts": ["The system will undergo a permanent change in state / तंत्र स्थायी रूप से अवस्था परिवर्तन से गुजरेगा", "The system shifts in the direction that opposes the change to re-establish equilibrium. / तंत्र उस दिशा में विस्थापित होगा जो परिवर्तन का विरोध करता है ताकि पुनः साम्य स्थापित हो सके", "The system will always favour the formation of reactants. / तंत्र हमेशा अभिकारकों के निर्माण का पक्षधर होगा", "The system remains at equilibrium without any changes. / तंत्र बिना किसी परिवर्तन के साम्य में रहेगा"], "ans": 1},
+            {"en": "In the reaction: Zn + CuSO₄ → ZnSO₄ + Cu, what happens to zinc?", "hi": "अभि‍क्रिया Zn + CuSO₄ → ZnSO₄ + Cu में जिंक का क्या होता है?", "opts": ["Zinc is reduced. / जिंक का अपचयन होता है।", "Zinc loses electrons. / जिंक इलेक्ट्रॉन खोता है।", "Zinc is oxidised. / जिंक का ऑक्सीकरण होता है।", "Zinc does not change. / जिंक में कोई परिवर्तन नहीं होता।"], "ans": 2},
+            {"en": "Which of the following statements is true for a balanced chemical equation?", "hi": "संतुलित रासायनिक समीकरण के लिए निम्नलिखित में से कौन-सा कथन सत्य है?", "opts": ["The total number of moles is the same on both sides. / दोनों पक्षों पर मोलों की कुल संख्या समान होती है।", "The total mass of molecules is unequal on both sides. / अणुओं का कुल द्रव्यमान दोनों पक्षों पर असमान होता है।", "The total number of atoms of each element is the same on both sides. / प्रत्येक तत्व के परमाणुओं की कुल संख्या दोनों पक्षों पर समान होती है।", "The total number of molecules is the same on both sides. / दोनों पक्षों पर अणुओं की कुल संख्या समान होती है।"], "ans": 2},
+            {"en": "In a displacement reaction, if a more reactive metal displaces a less reactive metal from its salt solution, what is the result?", "hi": "विस्थापन अभिक्रिया में, यदि अधिक अभिक्रियाशील धातु, कम अभिक्रियाशील धातु को उसके लवण विलयन से विस्थापित कर दे, तो परिणाम क्या होगा?", "opts": ["The less reactive metal is displaced and the more reactive metal becomes a part of the compound / कम अभिक्रियाशील धातु विस्थापित हो जाती है और अधिक अभिक्रियाशील धातु यौगिक का भाग बन जाती है", "Formation of an insoluble salt / अघुलनशील लवण का निर्माण", "The more reactive metal remains unchanged / अधिक अभिक्रियाशील धातु अपरिवर्तित रहती है", "The less reactive metal is displaced and solidifies / कम अभिक्रियाशील धातु विस्थापित एवं पिंडित हो जाती है"], "ans": 1},
+            {"en": "Which of the following is an example of exothermic combination reaction?", "hi": "निम्नलिखित में से कौन-सा, ऊष्माक्षेपी संयोजन अभिक्रिया (exothermic combination reaction) का उदाहरण है?", "opts": ["Respiration / श्‍वसन (Respiration)", "Photosynthesis / प्रकाश संश्लेषण (Photosynthesis)", "Quick lime dissolved in water / जल में विलीन चूना (Quick lime dissolved in water)", "Ammonium chloride dissolved in water / जल में विलीन अमोनियम क्लोराइड (Ammonium chloride dissolved in water)"], "ans": 2},
+            {"en": "Which of the following represents a combination reaction?", "hi": "निम्नलिखित में से कौन-सा, संयोजन अभिक्रिया को दर्शाता है?", "opts": ["CaO + H₂O → Ca(OH)₂", "CaCO₃ → CaO + CO₂", "2KClO₃ → 2KCl + 3O₂", "NaCl + AgNO₃ → AgCl + NaNO₃"], "ans": 0},
+            {"en": "Which of the following steps is the first step in balancing a chemical equation?", "hi": "रासायनिक समीकरण को संतुलित करने में निम्नलिखित में से कौन-सा चरण पहला चरण है?", "opts": ["Balancing oxygen atoms / ऑक्सीजन परमाणुओं को संतुलित करना", "Adding coefficients randomly / गुणांकों को यादृच्छिक रूप से जोड़ना", "Balancing hydrogen atoms / हाइड्रोजन परमाणुओं को संतुलित करना", "Writing the skeleton equation / स्‍केलेटन समीकरण लिखना"], "ans": 3},
+            {"en": "In a redox reaction, what is the role of a 'reducing agent'?", "hi": "अपचयोपचय अभिक्रिया में, अपचायक की क्या भूमिका है?", "opts": ["It is a substance that only participates in decomposition reactions. / यह एक ऐसा पदार्थ है जो केवल अपघटन अभिक्रियाओं में भाग लेता है।", "It is an agent that helps other substances to be oxidized. / यह एक ऐसा कर्मक है जो अन्य पदार्थों को ऑक्सीकृत करने में सहायता करता है।", "It is a substance that causes reduction and itself gets oxidized. / यह एक ऐसा पदार्थ है जो अपचयन करता है और स्वयं ऑक्सीकृत हो जाता है।", "It is a catalyst that speeds up the reaction. / यह एक उत्प्रेरक है, जो अभिक्रिया को तेज़ कर देता है।"], "ans": 2},
+            {"en": "Which of the following is an example of a double displacement reaction?", "hi": "निम्नलिखित में से कौन सा द्वि-विस्थापन अभिक्रिया का एक उदाहरण है?", "opts": ["Na₂SO₄(aq) + BaCl₂(aq) → BaSO₄(s) + 2NaCl(aq)", "Zn + CuSO₄ → ZnSO₄ + Cu", "C + O₂ → CO₂", "2H₂O → 2H₂ + O₂"], "ans": 0},
+            {"en": "The burning of carbon to form carbon dioxide is an example of a/an:", "hi": "कार्बन डाइऑक्साइड बनाने के लिए कार्बन का दहन किसका एक उदाहरण है:", "opts": ["Reversible reaction / उत्क्रमणीय अभिक्रिया", "Photochemical reaction / प्रकाश रासायनिक अभिक्रिया", "Exothermic reaction / ऊष्माक्षेपी अभिक्रिया", "Endothermic reaction / ऊष्माशोषी अभिक्रिया"], "ans": 2},
+            {"en": "Which of the following best defines reduction in a redox reaction?", "hi": "निम्नलिखित में से कौन रेडॉक्स अभिक्रिया में अपचयन को सर्वोत्तम रूप से परिभाषित करता है?", "opts": ["Gain of oxygen or loss of hydrogen / ऑक्सीजन की प्राप्ति या हाइड्रोजन की हानि", "Loss of electrons only / केवल इलेक्ट्रॉनों की हानि", "Gain of both oxygen and electrons / ऑक्सीजन और इलेक्ट्रॉन दोनों की प्राप्ति", "Gain of hydrogen or loss of oxygen / हाइड्रोजन की प्राप्ति या ऑक्सीजन की हानि"], "ans": 3},
+            {"en": "1. A precipitation reaction occurs when two aqueous solutions react to form an insoluble solid.\n2. The solid formed is called a precipitate.\n3. All precipitation reactions involve acids and bases only.\nWhich of the above statements are correct?", "hi": "1. अवक्षेपण अभिक्रिया तब होती है जब दो जलीय विलयन अभिक्रिया करके एक अघुलनशील ठोस बनाते हैं।\n2. बनने वाले ठोस को अवक्षेप कहते हैं।\n3. सभी अवक्षेपण अभिक्रियाओं में केवल अम्ल और क्षार शामिल होते हैं।\nउपरोक्त में से कौन से कथन सही हैं?", "opts": ["2 and 3 only / केवल 2 और 3", "1, 2, and 3 / 1, 2, और 3", "1 and 3 only / केवल 1 और 3", "1 and 2 only / केवल 1 और 2"], "ans": 3},
+            {"en": "When Barium Chloride (BaCl₂) solution is mixed with Sodium Sulfate (Na₂SO₄) solution, a white product Barium Sulfate (BaSO₄) is formed. This product is known as a ______.", "hi": "जब बेरियम क्लोराइड (BaCl₂) विलयन को सोडियम सल्फेट (Na₂SO₄) विलयन के साथ मिलाया जाता है, तो एक सफेद उत्पाद बेरियम सल्फेट (BaSO₄) बनता है। इस उत्पाद को ______ कहा जाता है।", "opts": ["Isotope / समस्थानिक", "Isomer / समावयवी", "Emulsion / इमल्शन", "Precipitate / अवक्षेप"], "ans": 3},
+            {"en": "Which term refers to the quantitative study of reactants and products in a chemical reaction?", "hi": "निम्नलिखित में से कौन-सा शब्द रासायनिक अभिक्रिया में अभिकारकों और उत्पादों के मात्रात्मक अध्ययन को संदर्भित करता है?", "opts": ["Molarity / मोलरता", "Stoichiometry / स्टॉइकियोमीट्री", "Mass per cent / द्रव्यमान प्रतिशत", "Mole fraction / मोल अंश"], "ans": 1},
+            {"en": "During the electrolysis of water, hydrogen and oxygen are released in which ratio?", "hi": "जल के विद्युत अपघटन के दौरान हाइड्रोजन और ऑक्सीजन किस अनुपात में मुक्त होते हैं?", "opts": ["4:1", "1:1", "3:1", "2:1"], "ans": 3},
+            {"en": "Which type of chemical reaction involves the breakdown of a compound into two or more simpler substances?", "hi": "किस प्रकार की रासायनिक अभिक्रिया में एक यौगिक का दो या दो से अधिक सरल पदार्थों में टूटना शामिल होता है?", "opts": ["Neutralization reaction / उदासीनीकरण अभिक्रिया", "Displacement reaction / विस्थापन अभिक्रिया", "Combination reaction / संयोजन अभिक्रिया", "Decomposition reaction / अपघटन अभिक्रिया"], "ans": 3},
+            {"en": "In carbon dioxide (CO₂), 12 g of carbon (C) combines with 32 g of oxygen (O). If 36 g of carbon is used, how much oxygen will combine according to the law of constant proportions?", "hi": "कार्बन डाइऑक्साइड (CO₂) में, 12 g कार्बन (C) 32 g ऑक्सीजन (O) के साथ संयुक्त होता है। यदि 36 g कार्बन का उपयोग किया जाता है, तो स्थिर अनुपात के नियम के अनुसार कितनी ऑक्सीजन संयुक्त होगी?", "opts": ["96 g", "64 g", "48 g", "72 g"], "ans": 0},
+            {"en": "Consider the following chemical reactions:\nI: BaCl₂ (aq) + Na₂SO₄ (aq) → BaSO₄ (s) + 2NaCl (aq)\nII: Pb(NO₃)₂ (aq) + KI (aq) → PbI₂ (s) + 2KNO₃(aq)\nWhich of the following correctly classifies these reactions?", "hi": "निम्नलिखित रासायनिक अभिक्रियाओं पर विचार करें:\nI: BaCl₂ (aq) + Na₂SO₄ (aq) → BaSO₄ (s) + 2NaCl (aq)\nII: Pb(NO₃)₂ (aq) + KI (aq) → PbI₂ (s) + 2KNO₃(aq)\nनिम्नलिखित में से कौन इन अभिक्रियाओं को सही ढंग से वर्गीकृत करता है?", "opts": ["I: Double displacement reaction; II: Displacement reaction / I: दोहरा विस्थापन अभिक्रिया; II: विस्थापन अभिक्रिया", "I: Displacement reaction; II: Double displacement reaction / I: विस्थापन अभिक्रिया; II: दोहरा विस्थापन अभिक्रिया", "I: Double displacement reaction; II: Neutralisation reaction / I: दोहरा विस्थापन अभिक्रिया; II: उदासीनीकरण अभिक्रिया", "Both are double displacement reactions / दोनों दोहरी विस्थापन अभिक्रियाएँ हैं"], "ans": 3},
+            {"en": "What type of reaction takes place when a single reactant breaks down into simpler products?", "hi": "जब एक एकल अभिकारक सरल उत्पादों में टूट जाता है, तो किस प्रकार की अभिक्रिया होती है?", "opts": ["Decomposition / अपघटन", "Double displacement / द्विविस्थापन", "Displacement / विस्थापन", "Combination / संयोजन"], "ans": 0},
+            {"en": "When an iron nail is dipped into a copper sulphate solution, which substance gets displaced?", "hi": "जब एक लोहे की कील को कॉपर सल्फेट के विलयन में डुबोया जाता है, तो कौन-सा पदार्थ विस्थापित होता है?", "opts": ["Copper / कॉपर", "Copper Sulphate / कॉपर सल्फेट", "Sulphate / सल्फेट", "Iron / लोहा"], "ans": 0},
+            {"en": "Which of the following is obtained upon heating ferrous sulphate?", "hi": "फेरस सल्फेट को गर्म करने पर निम्नलिखित में से क्या प्राप्त होता है?", "opts": ["Only ferric oxide / केवल फेरिक ऑक्साइड", "Ferric oxide, sulphur dioxide and sulphur trioxide / फेरिक ऑक्साइड, सल्फर डाइऑक्साइड और सल्फर ट्राइऑक्साइड", "ferric oxide and sulphur trioxide / फेरिक ऑक्साइड और सल्फर ट्राइऑक्साइड", "ferric oxide and sulphur dioxide / फेरिक ऑक्साइड और सल्फर डाइऑक्साइड"], "ans": 1},
+            {"en": "Select the correct law for the following statement.\nDuring a chemical reaction mass is neither created nor destroyed.", "hi": "निम्नलिखित कथन के लिए सही नियम का चयन करें।\nरासायनिक अभिक्रिया के दौरान द्रव्यमान न तो उत्पन्न होता है और न ही नष्ट होता है।", "opts": ["Law of thermodynamic / ऊष्मागतिकी का नियम", "Henry's Law / हेनरी का नियम", "Charles Law / चार्ल्स का नियम", "Law of conservation of mass / द्रव्यमान संरक्षण का नियम"], "ans": 3},
+            {"en": "Select the correct balanced equation for the reaction Al₂(SO₄)₃ + BaCl₂ → AlCl₃ + BaSO₄.", "hi": "अभिक्रिया Al₂(SO₄)₃ + BaCl₂ → AlCl₃ + BaSO₄ के लिए सही संतुलित समीकरण चुनिए।", "opts": ["Al₂(SO₄)₃ + 3BaCl₂ → 3AlCl₃ + 2BaSO₄", "2Al₂(SO₄)₃ + 3BaCl₂ → 2AlCl₃ + 3BaSO₄", "Al₂(SO₄)₃ + 2BaCl₂ → 2AlCl₃ + 3BaSO₄", "Al₂(SO₄)₃ + 3BaCl₂ → 2AlCl₃ + 3BaSO₄"], "ans": 3},
+            {"en": "Why does the blue colour of copper sulphate solution fade when an iron nail is dipped in it?", "hi": "जब लोहे की कील को कॉपर सल्फेट के विलयन में डुबोया जाता है तो उसका नीला रंग फीका क्यों पड़ जाता है?", "opts": ["Iron sulphate is colourless / आयरन सल्फेट रंगहीन होता है", "Copper sulphate decomposes / कॉपर सल्फेट विघटित हो जाता है", "Copper dissolves in water / कॉपर पानी में घुल जाता है", "Copper sulphate is converted into iron sulphate / कॉपर सल्फेट आयरन सल्फेट में परिवर्तित हो जाता है"], "ans": 3},
+            {"en": "Read the following statements carefully and select the correct option.\nAssertion (A): Keeping oily food in airtight containers prevents rancidity.\nReason (R): Airtight containers slow down the oxidation of fats and oils.", "hi": "निम्नलिखित कथनों को ध्यान से पढ़ें और सही विकल्प का चयन करें।\nअभिकथन (A): तैलीय भोजन को वायुरोधी पात्रों में रखने से दुर्गंध से बचाव होता है।\nकारण (R): वायुरोधी पात्र वसा और तेलों के ऑक्सीकरण को धीमा कर देते हैं।", "opts": ["A is false, but R is true. / A गलत है, लेकिन R सत्य है।", "Both A and R are true, and R is not the correct explanation of A. / A और R दोनों सत्य हैं, और R, A की सही व्याख्या नहीं है।", "A is true, but R is false. / A सत्य है, लेकिन R गलत है।", "Both A and R are true, and R is the correct explanation of A. / A और R दोनों सत्य हैं, और R, A की सही व्याख्या है।"], "ans": 3},
+            {"en": "When an iron nail is dipped in copper sulphate solution, which of the following observations confirms that a displacement reaction has occurred?", "hi": "जब एक लोहे की कील को कॉपर सल्फेट के विलयन में डुबोया जाता है, तो निम्नलिखित में से कौन सा अवलोकन पुष्टि करता है कि एक विस्थापन अभिक्रिया हुई है?", "opts": ["The solution remains blue, and the iron nail remains shiny. / विलयन नीला रहता है, और लोहे की कील चमकदार रहती है।", "The solution turns colourless, and hydrogen gas is released. / विलयन रंगहीन हो जाता है, और हाइड्रोजन गैस निकलती है।", "A white precipitate is formed. / एक सफेद अवक्षेप बनता है।", "The blue colour of the copper sulphate solution fades, and a reddish-brown deposit appears on the iron nail. / कॉपर सल्फेट के विलयन का नीला रंग फीका पड़ जाता है, और लोहे की कील पर एक लाल-भूरे रंग की परत जम जाती है।"], "ans": 3},
+            {"en": "In which of the following reactions does colour change, gas evolution, and solid residue formation, all occur simultaneously during decomposition?", "hi": "निम्नलिखित में से किस अभिक्रिया में वियोजन के दौरान रंग परिवर्तन, गैस का निकास और ठोस अवशेष का निर्माण, सभी एक साथ होते हैं?", "opts": ["2AgCl → 2Ag + Cl₂", "2Pb(NO₃)₂ → 2PbO + 4NO₂ + O₂", "CaCO₃ → CaO + CO₂", "2H₂O → 2H₂ + O₂"], "ans": 1},
+            {"en": "Which of the following best explains why combination reactions are often exothermic?", "hi": "निम्नलिखित में से कौन-सा संयोजन अभिक्रियाओं के अक्सर ऊष्माक्षेपी होने का सबसे अच्छा स्पष्टीकरण है?", "opts": ["They involve formation of bonds, which absorb energy. / उनमें बंधों का निर्माण शामिल होता है, जो ऊर्जा अवशोषित करते हैं।", "They require light to proceed. / आगे बढ़ने के लिए उन्हें प्रकाश की आवश्यकता होती है।", "They release energy due to stable product formation. / वे स्थिर उत्पाद निर्माण के कारण ऊर्जा मुक्त करते हैं।", "They involve the breaking of bonds only. / उनमें केवल बंधों का टूटना शामिल होता है।"], "ans": 2},
+            {"en": "Which reaction best supports the Law of Conservation of Mass?", "hi": "कौन सी अभिक्रिया द्रव्यमान संरक्षण के नियम का सर्वोत्तम समर्थन करती है?", "opts": ["Heating iron in open air / खुली हवा में लोहे को गर्म करना", "Mixing of vinegar and baking soda in a sealed container / एक सीलबंद बर्तन में सिरका और बेकिंग सोडा मिलाना", "Evaporation of alcohol in open air / खुली हवा में शराब का वाष्पीकरण", "Burning of paper in open air / खुली हवा में कागज जलाना"], "ans": 1},
+            {"en": "What is rancidity?", "hi": "विकृतगंधिता क्या है?", "opts": ["The process of preserving food by adding salt or sugar / नमक या चीनी मिलाकर भोजन को संरक्षित करने की प्रक्रिया", "The process of food becoming stale due to drying / सूखने के कारण भोजन के बासी होने की प्रक्रिया", "The process of food decaying due to bacterial growth / बैक्टीरिया के विकास के कारण भोजन के खराब होने की प्रक्रिया", "The process where fats and oils in food are oxidised, leading to changes in smell and taste / वह प्रक्रिया जहाँ भोजन में वसा और तेल ऑक्सीकृत हो जाते हैं, जिससे गंध और स्वाद में परिवर्तन होता है"], "ans": 3},
+            {"en": "Which of the following chemical equations is correctly balanced?", "hi": "निम्नलिखित में से कौन सा रासायनिक समीकरण सही ढंग से संतुलित है?", "opts": ["Fe + H₂O → Fe₃O₄ + H₂", "2Fe + 3H₂O → 2Fe₃O₄ + 3H₂", "3Fe + 4H₂O → Fe₃O₄ + 4H₂", "3Fe + 4H₂O → Fe₃O₄ + 2H₂"], "ans": 2},
+            {"en": "Which of the following displacement reactions are possible?\nⅠ. Fe(s) + CuSO₄(aq) → FeSO₄ + Cu\nⅡ. Cu + FeSO₄(aq) → CuSO₄ + Fe(s)\nⅢ. Na₂SO₄ + BaCl₂ → BaSO₄ + 2NaCl\nⅣ. AgCl + NaNO₃ → AgNO₃ + NaCl", "hi": "निम्नलिखित में से कौन सी विस्थापन अभिक्रियाएँ संभव हैं?\nⅠ. Fe(s) + CuSO₄(aq) → FeSO₄ + Cu\nⅡ. Cu + FeSO₄(aq) → CuSO₄ + Fe(s)\nⅢ. Na₂SO₄ + BaCl₂ → BaSO₄ + 2NaCl\nⅣ. AgCl + NaNO₃ → AgNO₃ + NaCl", "opts": ["I and III only / केवल I और III", "II and IV only / केवल II और IV", "I, II, and III only / केवल I, II और III", "I, III and IV only / केवल I, III और IV"], "ans": 0},
+            {"en": "Select the correct option regarding the following two statements labelled Assertion (A) and Reason (R).\nAssertion (A): Calcium oxide reacts vigorously with water to form calcium hydroxide.\nReason (R): In a combination reaction, two or more substances combine to form one product.", "hi": "अभिकथन (A) और कारण (R) के रूप में लेबल किए गए निम्नलिखित दो कथनों के संबंध में सही विकल्प का चयन करें।\nअभिकथन (A): कैल्शियम ऑक्साइड जल के साथ तीव्रता से अभिक्रिया करके कैल्शियम हाइड्रॉक्साइड बनाता है।\nकारण (R): संयोजन अभिक्रिया में, दो या दो से अधिक पदार्थ मिलकर एक उत्पाद बनाते हैं।", "opts": ["A is true, but R is false. / A सत्य है, लेकिन R असत्य है।", "Both A and R are true, and R is the correct explanation of A. / A और R दोनों सत्य हैं, और R, A की सही व्याख्या है।", "Both A and R are true, and R is not the correct explanation of A. / A और R दोनों सत्य हैं, और R, A की सही व्याख्या नहीं है।", "A is false, but R is true. / A असत्य है, लेकिन R सत्य है।"], "ans": 1},
+            {"en": "What happens to a substance when it is reduced in a reaction?", "hi": "किसी पदार्थ का अभिक्रिया में अपचयन होने पर क्या होता है?", "opts": ["It becomes more reactive / यह अधिक क्रियाशील हो जाता है", "It loses protons / यह प्रोटॉन खो देता है", "It gains electrons / यह इलेक्ट्रॉन प्राप्त कर लेता है", "It loses electrons / यह इलेक्ट्रॉन खो देता है"], "ans": 2},
+            {"en": "What is a reduction reaction?", "hi": "अपचयन अभिक्रिया क्या है?", "opts": ["Loss of neutrons / न्यूट्रॉन की हानि", "Loss of electrons / इलेक्ट्रॉनों की हानि", "Gain of protons / प्रोटॉन का लाभ", "Gain of electrons / इलेक्ट्रॉनों का लाभ"], "ans": 3},
+            {"en": "In a redox displacement reaction, if element X loses electrons and element Y gains electrons, then:", "hi": "एक रेडॉक्स विस्थापन अभिक्रिया में, यदि तत्व X इलेक्ट्रॉन खोता है और तत्व Y इलेक्ट्रॉन प्राप्त करता है, तो:", "opts": ["X is oxidised and Y is reduced / X ऑक्सीकृत होता है और Y अपचयित होता है", "Both are reduced / दोनों अपचयित होते हैं", "X is reduced and Y is oxidised / X अपचयित होता है और Y ऑक्सीकृत होता है", "Both are oxidised / दोनों ऑक्सीकृत होते हैं"], "ans": 0},
+            {"en": "The reaction between sodium sulphate and barium chloride is an example of double displacement reaction. This is also an example of:", "hi": "सोडियम सल्फेट और बेरियम क्लोराइड के बीच की अभिक्रिया द्वि-विस्थापन अभिक्रिया का एक उदाहरण है। यह इसका भी एक उदाहरण है:", "opts": ["combination reaction / संयोजन अभिक्रिया", "precipitation reaction / अवक्षेपण अभिक्रिया", "decomposition reaction / वियोजन अभिक्रिया", "displacement reaction / विस्थापन अभिक्रिया"], "ans": 1},
+            {"en": "In which of the following reactions do two compounds combine to form a new compound?", "hi": "निम्नलिखित में से किस अभिक्रिया में दो यौगिक मिलकर एक नया यौगिक बनाते हैं?", "opts": ["NH₃ + HCl → NH₄Cl", "2H₂ + O₂ → 2H₂O", "C + O₂ → CO₂", "2Mg + O₂ → 2MgO"], "ans": 0},
+            {"en": "In a Closed System, if 15 gm of substance A reacts with 10 gm of substance B, the total mass of the products should be", "hi": "एक बंद प्रणाली में, यदि पदार्थ A का 15 ग्राम पदार्थ B के 10 ग्राम के साथ अभिक्रिया करता है, तो उत्पादों का कुल द्रव्यमान होना चाहिए:", "opts": ["10 gm", "15 gm", "25 gm", "0 gm"], "ans": 2},
+            {"en": "What is a decomposition reaction?", "hi": "वियोजन अभिक्रिया क्या है?", "opts": ["A compound breaks down into two or more simpler substances / एक यौगिक दो या दो से अधिक सरल पदार्थों में टूट जाता है", "Two compounds exchange ions / दो यौगिक आयनों का आदान-प्रदान करते हैं", "Two or more substances combine to form one product / दो या दो से अधिक पदार्थ मिलकर एक उत्पाद बनाते हैं", "A single substance is formed from two or more reactants / दो या दो से अधिक अभिकारकों से एक एकल पदार्थ बनता है"], "ans": 0},
+            {"en": "Select the correct option regarding the following two statements labelled Assertion (A) and Reason (R).\nAssertion (A): If a substance loses oxygen during a reaction, it is said to be reduced.\nReason (R): Reduction is defined as the gain of hydrogen or loss of oxygen.", "hi": "अभिकथन (A) और कारण (R) के रूप में लेबल किए गए निम्नलिखित दो कथनों के संबंध में सही विकल्प का चयन करें।\nअभिकथन (A): यदि कोई पदार्थ अभिक्रिया के दौरान ऑक्सीजन खो देता है, तो उसे अपचयित कहा जाता है।\nकारण (R): अपचयन को हाइड्रोजन के लाभ या ऑक्सीजन की हानि के रूप में परिभाषित किया गया है।", "opts": ["A is false, but R is true. / A असत्य है, लेकिन R सत्य है।", "Both A and R are true, and R is the correct explanation of A. / A और R दोनों सत्य हैं, और R, A की सही व्याख्या है।", "Both A and R are true, and R is not the correct explanation of A. / A और R दोनों सत्य हैं, और R, A की सही व्याख्या नहीं है।", "A is true, but R is false. / A सत्य है, लेकिन R असत्य है।"], "ans": 1},
+            {"en": "What type of ions exchange between reactants in a double displacement reaction?", "hi": "एक दोहरी विस्थापन अभिक्रिया में अभिकारकों के बीच किस प्रकार के आयनों का आदान-प्रदान होता है?", "opts": ["Both positive - positive ions and negative - negative ions / धनात्मक - धनात्मक आयन और ऋणात्मक - ऋणात्मक आयन दोनों", "Negative - negative ions / ऋणात्मक - ऋणात्मक आयन", "Positive - positive ions / धनात्मक - धनात्मक आयन", "Positive - negative ions / धनात्मक - ऋणात्मक आयन"], "ans": 3},
+            {"en": "The colour of silver chloride changes when placed in sunlight for some time due to the:", "hi": "सूर्य के प्रकाश में कुछ समय के लिए रखे जाने पर सिल्वर क्लोराइड का रंग किसके कारण बदल जाता है?", "opts": ["Photochemical decomposition of silver chloride by sunlight / सूर्य के प्रकाश द्वारा सिल्वर क्लोराइड का प्रकाश-रासायनिक अपघटन", "Combination reaction of silver chloride with oxygen / ऑक्सीजन के साथ सिल्वर क्लोराइड की संयोजन अभिक्रिया", "Thermal decomposition of silver chloride / सिल्वर क्लोराइड का तापीय अपघटन", "Displacement reaction by oxygen and water / ऑक्सीजन और जल द्वारा विस्थापन अभिक्रिया"], "ans": 0},
+            {"en": "Read the following statements carefully and select the correct option.\nAssertion (A): In the reaction of copper with oxygen, oxygen acts as the reducing agent.\nReason (R): Oxygen adds to copper forming copper oxide.", "hi": "निम्नलिखित कथनों को ध्यानपूर्वक पढ़ें और सही विकल्प का चयन करें।\nअभिकथन (A): कॉपर की ऑक्सीजन के साथ अभिक्रिया में, ऑक्सीजन अपचायक (reducing agent) के रूप में कार्य करती है।\nकारण (R): ऑक्सीजन कॉपर के साथ जुड़कर कॉपर ऑक्साइड बनाती है।", "opts": ["Both A and R are true, and R is the correct explanation of A. / A और R दोनों सत्य हैं, और R, A की सही व्याख्या है।", "Both A and R are true, and R is not the correct explanation of A. / A और R दोनों सत्य हैं, और R, A की सही व्याख्या नहीं है।", "A is true, but R is false. / A सत्य है, लेकिन R असत्य है।", "A is false, but R is true. / A असत्य है, लेकिन R सत्य है।"], "ans": 3},
+            {"en": "Which energy change is generally associated with decomposition reactions?", "hi": "अपघटन अभिक्रियाओं के साथ सामान्यतः कौन सा ऊर्जा परिवर्तन जुड़ा होता है?", "opts": ["Endothermic energy change / ऊष्माशोषी ऊर्जा परिवर्तन", "No energy change / कोई ऊर्जा परिवर्तन नहीं", "Exothermic energy change / ऊष्माक्षेपी ऊर्जा परिवर्तन", "Reversible energy change / उत्क्रमणीय ऊर्जा परिवर्तन"], "ans": 0},
+            {"en": "Read the following statements carefully and select the correct option.\nAssertion (A): Decomposition reactions require energy in the form of heat, light, or electricity.\nReason (R): Energy is absorbed to break down reactant molecules into simpler products.", "hi": "निम्नलिखित कथनों को ध्यानपूर्वक पढ़ें और सही विकल्प का चयन करें।\nअभिकथन (A): अपघटन अभिक्रियाओं को ऊष्मा, प्रकाश या विद्युत के रूप में ऊर्जा की आवश्यकता होती है।\nकारण (R): अभिकारक अणुओं को सरल उत्पादों में तोड़ने के लिए ऊर्जा अवशोषित होती है।", "opts": ["Both A and R are true, and R is not the correct explanation of A. / A और R दोनों सत्य हैं, और R, A की सही व्याख्या नहीं है।", "A is true, but R is false. / A सत्य है, लेकिन R असत्य है।", "Both A and R are true, and R is the correct explanation of A. / A और R दोनों सत्य हैं, और R, A की सही व्याख्या है।", "A is false, but R is true. / A असत्य है, लेकिन R सत्य है।"], "ans": 2},
+            {"en": "Which of the following statements about oxidation and reduction are correct?\nI. A substance is said to be oxidised if it gains oxygen or loses hydrogen.\nII. A substance is reduced if it loses oxygen or gains hydrogen.\nIII. In every redox reaction, both oxidation and reduction occur simultaneously.", "hi": "ऑक्सीकरण और अपचयन के बारे में निम्नलिखित में से कौन सा कथन सही है?\nI. एक पदार्थ को ऑक्सीकृत कहा जाता है यदि वह ऑक्सीजन प्राप्त करता है या हाइड्रोजन खोता है।\nII. एक पदार्थ को अपचयित कहा जाता है यदि वह ऑक्सीजन खोता है या हाइड्रोजन प्राप्त करता है।\nIII. प्रत्येक रेडॉक्स अभिक्रिया में, ऑक्सीकरण और अपचयन दोनों एक साथ होते हैं।", "opts": ["I, II, and III / I, II, और III", "I and III only / केवल I और III", "II and III only / केवल II और III", "I and II only / केवल I और II"], "ans": 0},
+            {"en": "When solutions of lead(II) nitrate and potassium iodide are mixed, the reaction leads to the formation of which of the following?", "hi": "जब लेड(II) नाइट्रेट और पोटेशियम आयोडाइड के विलयनों को मिलाया जाता है, तो अभिक्रिया के परिणामस्वरूप निम्नलिखित में से किसका निर्माण होता है?", "opts": ["A yellow precipitate of lead iodide is formed. / लेड आयोडाइड का पीला अवक्षेप बनता है।", "A yellow precipitate of lead sulphate is formed. / लेड सल्फेट का पीला अवक्षेप बनता है।", "An orange precipitate of lead iodide is formed. / लेड आयोडाइड का नारंगी अवक्षेप बनता है।", "An orange precipitate of lead iodate is formed. / लेड आयोडेट का नारंगी अवक्षेप बनता है।"], "ans": 0},
+            {"en": "Consider the unbalanced reaction:\n___C₂H₆ + ___O₂ → ___CO₂ + ___H₂O\nWhich of the following is the correct set of coefficients to balance this equation?", "hi": "असंतुलित अभिक्रिया पर विचार करें:\n___C₂H₆ + ___O₂ → ___CO₂ + ___H₂O\nइस समीकरण को संतुलित करने के लिए निम्नलिखित में से कौन सा गुणांकों का सही सेट है?", "opts": ["1, 5, 3, 4", "2, 7, 4, 6", "2, 5, 4, 6", "1, 3, 2, 3"], "ans": 1},
+            {"en": "Which of the following observable changes indicate that a chemical reaction has occurred?\n(a) Formation of gas\n(b) Formation of precipitates\n(c) Change in physical state\n(d) Colour change", "hi": "निम्नलिखित में से कौन-से अवलोकनीय परिवर्तन दर्शाते हैं कि एक रासायनिक अभिक्रिया हुई है?\n(a) गैस का निर्माण\n(b) अवक्षेप का निर्माण\n(c) भौतिक अवस्था में परिवर्तन\n(d) रंग परिवर्तन", "opts": ["Only (a) and (b) / केवल (a) और (b)", "Only (c) and (d) / केवल (c) और (d)", "(a), (b), (c) and (d) / (a), (b), (c) और (d)", "Only (a), (b) and (c) / केवल (a), (b) और (c)"], "ans": 2},
+            {"en": "Ferrous sulphate decomposes to which of the following substances ?", "hi": "फेरस सल्फेट के अपघटन से निम्नलिखित में से कौन-से पदार्थ बनते हैं?", "opts": ["Ferric oxide (Fe₂O₃), sulphur dioxide (SO₂) and sulphur trioxide (SO₃) / फेरिक ऑक्साइड (Fe₂O₃), सल्फर डाइऑक्साइड (SO₂) और सल्फर ट्राइऑक्साइड (SO₃)", "Ferric oxide (Fe₂O₃) and sulphur dioxide (SO₂) only / केवल फेरिक ऑक्साइड (Fe₂O₃) और सल्फर डाइऑक्साइड (SO₂)", "Ferric oxide (Fe₂O₃) only / केवल फेरिक ऑक्साइड (Fe₂O₃)", "Ferric oxide (Fe₂O₃) and sulphur trioxide (SO₃) only / केवल फेरिक ऑक्साइड (Fe₂O₃) और सल्फर ट्राइऑक्साइड (SO₃)"], "ans": 0},
+            {"en": "Which of the following statements is true about precipitation reaction?", "hi": "निम्नलिखित में से कौन सा कथन अवक्षेपण अभिक्रिया के बारे में सत्य है?", "opts": ["Only water is formed. / केवल जल बनता है।", "An insoluble salt is formed. / एक अघुलनशील लवण बनता है।", "Only hydrogen gas is formed. / केवल हाइड्रोजन गैस बनती है।", "Only soluble solution is formed. / केवल घुलनशील विलयन बनता है।"], "ans": 1},
+            {"en": "A student performs an experiment wherein he adds barium chloride to aluminium sulphate. Which of the following reaction is correct?", "hi": "एक छात्र एक प्रयोग करता है जिसमें वह एल्यूमीनियम सल्फेट में बेरियम क्लोराइड मिलाता है। निम्नलिखित में से कौन-सी अभिक्रिया सही है?", "opts": ["3BaCl₂(aq) + Al₂(SO₄)₃(aq) → 3BaSO₄(s) + 2AlCl₃(aq)", "3BaCl₂(aq) + Al₂(SO₄)₃(aq) → BaSO₄(s) + AlCl₃(aq)", "BaCl₂(aq) + Al₂(SO₄)₃(aq) → 3BaSO₄(s) + Al(s) + Cl₂(g)", "BaCl₂(aq) + Al₂(SO₄)₃(aq) → Ba(s) + SO₂(g) + 2AlCl₃(aq)"], "ans": 0},
+            {"en": "How many molecules of hydrogen sulphide are required to balance the given chemical equation? SO₂ + H₂S → 3S + 2H₂O", "hi": "दिए गए रासायनिक समीकरण को संतुलित करने के लिए हाइड्रोजन सल्फाइड के कितने अणुओं की आवश्यकता है? SO₂ + H₂S → 3S + 2H₂O", "opts": ["Four / चार", "Three / तीन", "Two / दो", "One / एक"], "ans": 2}
+        ];
+
+        const state = {
+            current: 0,
+            answers: new Array(QUESTIONS.length).fill(null),
+            locked: new Array(QUESTIONS.length).fill(false),
+            visited: new Array(QUESTIONS.length).fill(false),
+            lang: 'en',
+            mode: 'test',
+            startTime: null,
+            timerInterval: null,
+            elapsed: 0
+        };
+
+        function $(id) { return document.getElementById(id); }
+        function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+        function toast(msg) {
+            const t = $('toast');
+            $('toastText').textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        }
+
+        function formatTime(s) {
+            const m = Math.floor(s / 60);
+            return String(m).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+        }
+
+        function startApp(mode) {
+            state.mode = mode;
+            $('startScreen').classList.add('hidden');
+            $('quizApp').classList.remove('hidden');
+            state.startTime = Date.now();
+            state.visited[0] = true;
+            state.timerInterval = setInterval(() => {
+                state.elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+                $('timerText').textContent = formatTime(state.elapsed);
+            }, 1000);
+            renderQuestion();
+            buildPalette();
+        }
+
+        function renderQuestion() {
+            const i = state.current;
+            const q = QUESTIONS[i];
+            const qText = state.lang === 'en' ? q.en : q.hi;
+            const isQuiz = state.mode === 'quiz';
+            const locked = state.locked[i];
+            const userAns = state.answers[i];
+
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = '';
+                let tag = '';
+                if (isQuiz && locked) {
+                    if (idx === q.ans) { cls = 'correct'; tag = '<span class="opt-tag">Correct</span>'; }
+                    if (userAns === idx && idx !== q.ans) { cls = 'wrong'; tag = '<span class="opt-tag">Your Ans</span>'; }
+                } else if (userAns === idx) {
+                    cls = 'selected';
+                }
+                optsHtml += `
+                    <div class="opt ${cls} ${locked ? 'locked' : ''}" onclick="selectOption(${idx})">
+                        <div class="opt-letter">${String.fromCharCode(65 + idx)}</div>
+                        <div class="opt-text">${opt}</div>
+                        ${tag}
+                    </div>
+                `;
+            });
+
+            let solHtml = '';
+            if (isQuiz && locked) {
+                solHtml = `
+                    <div class="sol-box">
+                        <div class="sol-head"><i class="fas fa-lightbulb"></i> Answer Key</div>
+                        <div class="sol-content">Correct Option: <strong>${String.fromCharCode(65 + q.ans)} (${q.opts[q.ans]})</strong></div>
+                    </div>
+                `;
+            }
+
+            $('quizMain').innerHTML = `
+                <div class="q-card">
+                    <div class="q-top">
+                        <div class="q-num-badge"><i class="fas fa-hashtag"></i> Question ${i + 1} of ${QUESTIONS.length}</div>
+                        <button class="lang-btn" onclick="toggleLang()"><i class="fas fa-language"></i> ${state.lang === 'en' ? 'हिन्दी' : 'English'}</button>
+                    </div>
+                    <div class="q-text">${qText}</div>
+                    <div class="opts">${optsHtml}</div>
+                    ${solHtml}
+                </div>
+            `;
+
+            $('prevBtn').disabled = i === 0;
+            $('nextLabel').textContent = i === QUESTIONS.length - 1 ? 'Finish' : 'Next';
+            updatePaletteGrid();
+        }
+
+        function selectOption(idx) {
+            const i = state.current;
+            if (state.mode === 'quiz' && state.locked[i]) return;
+
+            state.answers[i] = idx;
+            if (state.mode === 'quiz') {
+                state.locked[i] = true;
+                if (idx === QUESTIONS[i].ans) toast('Correct! 🎉');
+                else toast('Incorrect');
+            }
+            renderQuestion();
+        }
+
+        function toggleLang() {
+            state.lang = state.lang === 'en' ? 'hi' : 'en';
+            renderQuestion();
+        }
+
+        function prevQuestion() {
+            if (state.current > 0) {
+                state.current--;
+                state.visited[state.current] = true;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (state.current < QUESTIONS.length - 1) {
+                state.current++;
+                state.visited[state.current] = true;
+                renderQuestion();
+            } else {
+                openSubmitModal();
+            }
+        }
+
+        function buildPalette() {
+            const grid = $('paletteGrid');
+            grid.innerHTML = '';
+            QUESTIONS.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'pal-btn';
+                btn.id = 'pal-' + i;
+                btn.textContent = i + 1;
+                btn.onclick = () => {
+                    state.current = i;
+                    state.visited[i] = true;
+                    closePalette();
+                    renderQuestion();
+                };
+                grid.appendChild(btn);
+            });
+            updatePaletteGrid();
+        }
+
+        function updatePaletteGrid() {
+            QUESTIONS.forEach((_, i) => {
+                const btn = $('pal-' + i);
+                if (!btn) return;
+                btn.className = 'pal-btn';
+                if (i === state.current) btn.classList.add('current');
+                if (state.answers[i] !== null) btn.classList.add('answered');
+            });
+        }
+
+        function openPalette() {
+            $('paletteDrawer').classList.add('open');$('paletteOverlay').classList.add('open');
+        }
+        function closePalette() {
+            $('paletteDrawer').classList.remove('open');$('paletteOverlay').classList.remove('open');
+        }
+
+        function openSubmitModal() {
+            const ans = state.answers.filter(a => a !== null).length;
+            $('modalAttempted').textContent = ans;
+            $('modalUnattempted').textContent = QUESTIONS.length - ans;
+            $('submitModal').classList.add('open');
+        }
+        function closeSubmitModal() {
+            $('submitModal').classList.remove('open');
+        }
+
+        function confirmSubmit() {
+            closeSubmitModal();
+            if (state.timerInterval) clearInterval(state.timerInterval);
+
+            let correct = 0, wrong = 0;
+            state.answers.forEach((ans, i) => {
+                if (ans !== null) {
+                    if (ans === QUESTIONS[i].ans) correct++;
+                    else wrong++;
+                }
+            });
+
+            const attempted = correct + wrong;
+            const accuracy = attempted > 0 ? Math.round((correct / attempted) * 100) : 0;
+
+            $('resultsInner').innerHTML = `
+                <div class="res-hero">
+                    <h2>Test Completed!</h2>
+                    <p style="color:var(--text-muted);font-size:14px;margin-top:2px;">Total Time: ${formatTime(state.elapsed)}</p>
+                </div>
+                <div class="res-score-card">
+                    <div class="res-score-val">${correct} <span>/ ${QUESTIONS.length}</span></div>
+                    <div class="res-score-lbl">Total Score</div>
+                </div>
+                <div class="res-grid">
+                    <div class="res-item">
+                        <div class="res-item-val" style="color:var(--green)">${correct}</div>
+                        <div class="res-item-lbl">Correct</div>
+                    </div>
+                    <div class="res-item">
+                        <div class="res-item-val" style="color:var(--red)">${wrong}</div>
+                        <div class="res-item-lbl">Wrong</div>
+                    </div>
+                    <div class="res-item">
+                        <div class="res-item-val">${attempted}</div>
+                        <div class="res-item-lbl">Attempted</div>
+                    </div>
+                    <div class="res-item">
+                        <div class="res-item-val" style="color:var(--primary)">${accuracy}%</div>
+                        <div class="res-item-lbl">Accuracy</div>
+                    </div>
+                </div>
+                <div class="res-actions">
+                    <button class="res-btn primary" onclick="location.reload()"><i class="fas fa-redo"></i> Retake Test</button>
+                </div>
+            `;
+            $('resultsScreen').classList.add('open');
+        }
+    </script>
+</body>
+</html>
